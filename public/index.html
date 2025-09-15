@@ -1,11 +1,1462 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Omniverse Games</title>
-</head>
-<body>
-  <div id="root"></div>
-</body>
-</html>
+import React, { useState, useEffect } from 'react';
+
+const App = () => {
+  const [activeSection, setActiveSection] = useState('inicio');
+  const [isNdaModalOpen, setIsNdaModalOpen] = useState(false);
+  const [isPreorderModalOpen, setIsPreorderModalOpen] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Simulate form submission
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSubmitSuccess(true);
+      setFormData({ name: '', email: '', message: '' });
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setSubmitSuccess(false);
+        setIsNdaModalOpen(false);
+        setIsPreorderModalOpen(false);
+      }, 3000);
+    }, 1500);
+  };
+
+  // Handle launcher download
+  const handleLauncherDownload = () => {
+    // Simulate launcher download
+    const link = document.createElement('a');
+    link.href = '#';
+    link.download = 'OmniverseLauncher_v1.0.exe';
+    link.click();
+    
+    // Show notification
+    alert('Descarga iniciada: OmniverseLauncher_v1.0.exe');
+  };
+
+  // Cosmic background animation
+  useEffect(() => {
+    const createStars = () => {
+      const starsContainer = document.getElementById('stars-container');
+      if (!starsContainer) return;
+      
+      // Clear existing stars
+      starsContainer.innerHTML = '';
+      
+      // Create 300 stars with random positions and sizes
+      for (let i = 0; i < 300; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.width = `${Math.random() * 3 + 1}px`;
+        star.style.height = star.style.width;
+        star.style.opacity = Math.random() * 0.8 + 0.2;
+        
+        // Add pulsing animation with different delays
+        star.style.animation = `pulse ${Math.random() * 4 + 3}s infinite ease-in-out`;
+        star.style.animationDelay = `${Math.random() * 2}s`;
+        
+        starsContainer.appendChild(star);
+      }
+    };
+    
+    createStars();
+    const interval = setInterval(createStars, 15000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  // Navigation handler
+  const handleNavClick = (section) => {
+    setActiveSection(section);
+    setMobileMenuOpen(false);
+    
+    // Scroll to section
+    const element = document.getElementById(section);
+    if (element) {
+      window.scrollTo({
+        top: element.offsetTop - 80,
+        behavior: 'smooth'
+      });
+    }
+    
+    // Update URL hash
+    history.pushState(null, '', `#${section}`);
+  };
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.substring(1) || 'inicio';
+      setActiveSection(hash);
+      
+      // Scroll to section
+      const element = document.getElementById(hash);
+      if (element) {
+        window.scrollTo({
+          top: element.offsetTop - 80,
+          behavior: 'instant'
+        });
+      }
+    };
+    
+    window.addEventListener('hashchange', handleHashChange);
+    handleHashChange(); // Initialize on load
+    
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Mock data for projects, team, and careers
+  const projects = [
+    {
+      title: "THE PRIMORDIAL BATTLEZONE",
+      subtitle: "El Battle Royale del Futuro",
+      description: "Experimenta combate estratégico como nunca antes. Un universo primordial donde cada batalla reescribe la historia, fusionando mecánicas innovadoras con una narrativa emergente que evoluciona con cada jugador.",
+      features: [
+        "Battle Royale de nueva generación con mecánicas únicas",
+        "Sistema de evolución de armas dinámico",
+        "Economía del juego integrada con recompensas reales",
+        "Multiverso interconectado entre partidas",
+        "Narrativa emergente que cambia con la comunidad",
+        "Tecnología blockchain para propiedad real de items"
+      ],
+      status: "EN DESARROLLO",
+      releaseDate: "Q2 2026",
+      platforms: ["PC", "PlayStation 5", "Xbox Series X/S"],
+      price: "$59.99",
+      preorderPrice: "$49.99"
+    }
+  ];
+
+  const team = [
+    {
+      name: "ALEX RIVERA",
+      role: "CEO & Fundador",
+      bio: "Visionario con 15 años en la industria gaming. Anteriormente en Epic Games y Blizzard. Especialista en diseño de experiencias inmersivas y economías digitales sostenibles."
+    },
+    {
+      name: "MAYA CHEN",
+      role: "CTO & Co-fundadora", 
+      bio: "Experta en arquitecturas escalables y blockchain gaming. Ex-líder técnico en Riot Games. Pionera en la integración de tecnologías Web3 en experiencias gaming masivas."
+    },
+    {
+      name: "JORDAN KIM",
+      role: "Director Creativo",
+      bio: "Artista visionario con background en cine y gaming. Ex-director de arte en Naughty Dog. Especialista en narrativa visual y worldbuilding para universos gaming expansivos."
+    }
+  ];
+
+  const careers = [
+    {
+      title: "SENIOR GAME DEVELOPER",
+      description: "Lidera el desarrollo de sistemas core y arquitectura del juego principal.",
+      requirements: ["5+ años experiencia en Unity/Unreal", "Experto en C++/C#", "Experiencia en multijugador masivo"],
+      location: "Remoto/Barcelona",
+      type: "Tiempo Completo"
+    },
+    {
+      title: "LEAD 3D ARTIST",
+      description: "Crea assets visuales que definan la estética de nuestros universos gaming.",
+      requirements: ["Maestría en Maya/Blender/3ds Max", "Experiencia en PBR y texturizado", "Portfolio AAA demostrable"],
+      location: "Remoto/Barcelona", 
+      type: "Tiempo Completo"
+    },
+    {
+      title: "SENIOR GAME DESIGNER",
+      description: "Diseña mecánicas innovadoras y sistemas de juego que revolucionen el género.",
+      requirements: ["Experiencia en diseño de Battle Royale", "Conocimiento en economías de juego", "Pensamiento sistémico avanzado"],
+      location: "Remoto/Barcelona",
+      type: "Tiempo Completo"
+    }
+  ];
+
+  // Render different sections based on active section
+  const renderSection = () => {
+    switch (activeSection) {
+      case 'inicio':
+        return (
+          <div id="inicio" className="min-h-screen flex flex-col">
+            {/* Hero Section */}
+            <div className="flex-1 flex items-center justify-center px-6 pt-20 pb-10">
+              <div className="text-center relative z-20 max-w-6xl mx-auto">
+                <h1 className="text-5xl md:text-8xl font-bold mb-6 quantum-lemon-title text-white leading-tight">
+                  OMNIVERSE
+                  <br />
+                  GAMES
+                </h1>
+                <p className="text-xl md:text-3xl mb-4 text-cyan-400 font-semibold">
+                  CREAMOS UNIVERSOS INMERSIVOS
+                </p>
+                <p className="text-base md:text-xl mb-12 text-cyan-300 max-w-3xl mx-auto">
+                  Donde cada batalla cuenta una historia épica y cada jugador forja su destino
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
+                  <button 
+                    onClick={() => setIsPreorderModalOpen(true)}
+                    className="sci-fi-button text-xl bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700"
+                  >
+                    <svg className="w-6 h-6 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+                    </svg>
+                    PRE-ORDENAR AHORA
+                  </button>
+                  
+                  <button 
+                    onClick={handleLauncherDownload}
+                    className="sci-fi-button text-xl bg-gradient-to-r from-cyan-500 to-cyan-600"
+                  >
+                    <svg className="w-6 h-6 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                    DESCARGAR LAUNCHER
+                  </button>
+                  
+                  <button 
+                    onClick={() => setIsNdaModalOpen(true)}
+                    className="sci-fi-button text-xl border-2 border-cyan-400 bg-transparent hover:bg-cyan-900/30"
+                  >
+                    <svg className="w-6 h-6 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clipRule="evenodd" />
+                    </svg>
+                    INVERSORES NDA
+                  </button>
+                </div>
+
+                {/* Game Preview */}
+                <div className="bg-black/30 backdrop-blur-md border border-cyan-500/20 rounded-2xl p-8 mb-12">
+                  <h2 className="text-3xl md:text-5xl font-bold mb-4 quantum-lemon text-white">
+                    THE PRIMORDIAL BATTLEZONE
+                  </h2>
+                  <p className="text-lg text-cyan-300 mb-6">
+                    El Battle Royale que redefinirá el género para siempre
+                  </p>
+                  <div className="aspect-video bg-gradient-to-br from-cyan-900/20 to-purple-900/20 rounded-xl flex items-center justify-center border border-cyan-500/30">
+                    <div className="text-center">
+                      <svg className="w-24 h-24 text-cyan-400 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                      </svg>
+                      <p className="text-cyan-400 font-semibold">TRAILER PRÓXIMAMENTE</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Vision Section */}
+            <div id="vision" className="py-20 bg-gradient-to-b from-[#0a0f1a] to-[#0d1219]">
+              <div className="container mx-auto px-6">
+                <div className="text-center mb-16">
+                  <h2 className="text-4xl md:text-6xl font-bold mb-6 quantum-lemon">NUESTRA VISIÓN</h2>
+                  <p className="text-gray-400 max-w-4xl mx-auto text-lg">
+                    Revolucionar la industria del gaming creando experiencias que trascienden lo virtual y conectan jugadores a través de universos inmersivos sin precedentes
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                  {[
+                    {
+                      icon: "🚀",
+                      title: "INNOVACIÓN RADICAL",
+                      description: "Pioneros en mecánicas revolucionarias que redefinen completamente los límites de la experiencia gaming moderna."
+                    },
+                    {
+                      icon: "🌍",
+                      title: "COMUNIDAD GLOBAL",
+                      description: "Construimos ecosistemas donde millones de jugadores conectan, compiten y crean historias épicas que perduran."
+                    },
+                    {
+                      icon: "⭐",
+                      title: "EXCELENCIA ABSOLUTA",
+                      description: "Cada pixel, cada línea de código, cada decision de diseño persigue un único objetivo: la perfección gaming."
+                    }
+                  ].map((item, index) => (
+                    <div key={index} className="vision-card group hover:scale-105 transition-all duration-300">
+                      <div className="icon text-4xl mb-6">{item.icon}</div>
+                      <h3 className="text-2xl font-bold mb-6 quantum-lemon text-cyan-400 group-hover:text-white transition-colors">{item.title}</h3>
+                      <p className="text-gray-300 leading-relaxed">{item.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Stats Section */}
+            <div className="py-20 bg-[#0a0f1a]">
+              <div className="container mx-auto px-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
+                  {[
+                    { number: "15+", label: "AÑOS DE EXPERIENCIA" },
+                    { number: "50M+", label: "JUGADORES OBJETIVO" },
+                    { number: "24/7", label: "DESARROLLO ACTIVO" },
+                    { number: "2026", label: "LANZAMIENTO" }
+                  ].map((stat, index) => (
+                    <div key={index} className="text-center">
+                      <div className="text-4xl md:text-6xl font-bold text-cyan-400 quantum-lemon mb-2">{stat.number}</div>
+                      <div className="text-sm md:text-base text-gray-400 font-medium">{stat.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+        
+      case 'proyectos':
+        return (
+          <div id="proyectos" className="min-h-screen py-20 bg-gradient-to-b from-[#0a0f1a] to-[#0d1219]">
+            <div className="container mx-auto px-6">
+              <div className="text-center mb-16">
+                <h2 className="text-4xl md:text-6xl font-bold mb-6 quantum-lemon">NUESTROS PROYECTOS</h2>
+                <p className="text-gray-400 max-w-4xl mx-auto text-lg">
+                  Cada universo que creamos representa una nueva frontera en la innovación gaming
+                </p>
+              </div>
+              
+              <div className="max-w-6xl mx-auto">
+                {projects.map((project, index) => (
+                  <div key={index} className="game-showcase-card mb-12">
+                    <div className="flex items-center justify-between mb-6">
+                      <span className="status-badge">
+                        {project.status}
+                      </span>
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-cyan-400">{project.releaseDate}</div>
+                        <div className="text-sm text-gray-400">Fecha de Lanzamiento</div>
+                      </div>
+                    </div>
+                    
+                    <h3 className="text-3xl md:text-5xl font-bold mb-4 quantum-lemon text-white">
+                      {project.title}
+                    </h3>
+                    <h4 className="text-xl md:text-2xl text-cyan-400 mb-6">{project.subtitle}</h4>
+                    
+                    <p className="text-gray-300 mb-8 text-lg leading-relaxed">
+                      {project.description}
+                    </p>
+
+                    {/* Platforms */}
+                    <div className="mb-8">
+                      <h5 className="text-lg font-bold text-white mb-3">PLATAFORMAS DISPONIBLES:</h5>
+                      <div className="flex flex-wrap gap-3">
+                        {project.platforms.map((platform, pIndex) => (
+                          <span key={pIndex} className="platform-badge">
+                            {platform}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                      <div>
+                        <h5 className="text-lg font-bold text-white mb-4">CARACTERÍSTICAS REVOLUCIONARIAS:</h5>
+                        <div className="space-y-3">
+                          {project.features.map((feature, featureIndex) => (
+                            <div key={featureIndex} className="flex items-start">
+                              <svg className="w-6 h-6 text-cyan-400 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                              </svg>
+                              <span className="text-gray-300">{feature}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-6">
+                        <div className="pricing-card">
+                          <div className="text-center mb-4">
+                            <div className="text-sm text-gray-400 line-through">{project.price}</div>
+                            <div className="text-3xl font-bold text-cyan-400">{project.preorderPrice}</div>
+                            <div className="text-sm text-gray-400">Precio de Pre-orden</div>
+                          </div>
+                          <button 
+                            onClick={() => setIsPreorderModalOpen(true)}
+                            className="sci-fi-button text-xl w-full bg-gradient-to-r from-orange-500 to-red-600"
+                          >
+                            PRE-ORDENAR AHORA
+                          </button>
+                        </div>
+                        
+                        <div className="text-center">
+                          <button 
+                            onClick={handleLauncherDownload}
+                            className="sci-fi-button text-xl w-full bg-gradient-to-r from-cyan-500 to-cyan-600"
+                          >
+                            DESCARGAR LAUNCHER
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+        
+      case 'equipo':
+        return (
+          <div id="equipo" className="min-h-screen py-20 bg-gradient-to-b from-[#0a0f1a] to-[#0d1219]">
+            <div className="container mx-auto px-6">
+              <div className="text-center mb-16">
+                <h2 className="text-4xl md:text-6xl font-bold mb-6 quantum-lemon">NUESTRO EQUIPO</h2>
+                <p className="text-gray-400 max-w-4xl mx-auto text-lg">
+                  Visionarios, creadores y pioneros unidos por una pasión común: revolucionar la industria gaming para las próximas generaciones
+                </p>
+              </div>
+              
+              <div className="text-center mb-16">
+                <h3 className="text-3xl md:text-4xl font-bold mb-6 quantum-lemon text-cyan-400">LIDERAZGO EJECUTIVO</h3>
+                <p className="text-gray-400 text-lg">Los arquitectos de nuestra visión revolucionaria</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                {team.map((member, index) => (
+                  <div key={index} className="team-card group">
+                    <div className="avatar-container mb-6">
+                      <svg className="w-16 h-16 text-cyan-400 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    
+                    <h4 className="text-2xl font-bold mb-2 quantum-lemon group-hover:text-cyan-400 transition-colors">{member.name}</h4>
+                    <p className="text-cyan-400 font-bold mb-6 text-lg">{member.role}</p>
+                    <p className="text-gray-300 leading-relaxed">{member.bio}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+        
+      case 'carreras':
+        return (
+          <div id="carreras" className="min-h-screen py-20 bg-gradient-to-b from-[#0a0f1a] to-[#0d1219]">
+            <div className="container mx-auto px-6">
+              <div className="text-center mb-16">
+                <h2 className="text-4xl md:text-6xl font-bold mb-6 quantum-lemon">ÚNETE A LA REVOLUCIÓN</h2>
+                <p className="text-gray-400 max-w-4xl mx-auto text-lg">
+                  Buscamos talentos visionarios para crear el futuro del gaming. Forma parte de un equipo que está redefiniendo los límites de lo posible en el entretenimiento interactivo.
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                {careers.map((job, index) => (
+                  <div key={index} className="career-card group">
+                    <div className="flex justify-between items-start mb-4">
+                      <span className="job-type-badge">{job.type}</span>
+                      <span className="text-sm text-cyan-400">{job.location}</span>
+                    </div>
+                    
+                    <h4 className="text-2xl font-bold mb-4 quantum-lemon text-cyan-400 group-hover:text-white transition-colors">{job.title}</h4>
+                    <p className="text-gray-300 mb-6 leading-relaxed">{job.description}</p>
+                    
+                    <div className="mb-8">
+                      <h5 className="text-lg font-bold text-white mb-3">REQUISITOS:</h5>
+                      <div className="space-y-2">
+                        {job.requirements.map((req, reqIndex) => (
+                          <div key={reqIndex} className="flex items-start">
+                            <svg className="w-5 h-5 text-cyan-400 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-gray-300 text-sm">{req}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <button className="sci-fi-button text-lg w-full group-hover:bg-gradient-to-r group-hover:from-cyan-600 group-hover:to-purple-600 transition-all">
+                      APLICAR AHORA
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+        
+      case 'contacto':
+        return (
+          <div id="contacto" className="min-h-screen py-20 bg-gradient-to-b from-[#0a0f1a] to-[#0d1219]">
+            <div className="container mx-auto px-6">
+              <div className="text-center mb-16">
+                <h2 className="text-4xl md:text-6xl font-bold mb-6 quantum-lemon">CONECTEMOS</h2>
+                <p className="text-gray-400 max-w-4xl mx-auto text-lg">
+                  ¿Tienes una visión que cambiará el gaming? ¿Quieres invertir en el futuro del entretenimiento? 
+                  Hablemos sobre cómo podemos crear algo extraordinario juntos.
+                </p>
+              </div>
+              
+              <div className="max-w-7xl mx-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                  <div className="space-y-8">
+                    <div>
+                      <h3 className="text-3xl font-bold mb-6 quantum-lemon text-cyan-400">ENVÍANOS UN MENSAJE</h3>
+                      <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <input
+                            type="text"
+                            name="name"
+                            placeholder="Nombre Completo *"
+                            value={formData.name}
+                            onChange={handleInputChange}
+                            className="form-input"
+                            required
+                          />
+                          <input
+                            type="email"
+                            name="email"
+                            placeholder="Email Corporativo *"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            className="form-input"
+                            required
+                          />
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <input
+                            type="text"
+                            name="company"
+                            placeholder="Empresa/Organización"
+                            value={formData.company || ''}
+                            onChange={(e) => setFormData({...formData, company: e.target.value})}
+                            className="form-input"
+                          />
+                          <select
+                            name="type"
+                            className="form-input"
+                            required
+                          >
+                            <option value="">Tipo de Consulta *</option>
+                            <option value="investment">Inversión/Funding</option>
+                            <option value="partnership">Alianza Estratégica</option>
+                            <option value="press">Prensa/Media</option>
+                            <option value="career">Oportunidades Laborales</option>
+                            <option value="general">Consulta General</option>
+                          </select>
+                        </div>
+                        
+                        <textarea
+                          name="message"
+                          placeholder="Cuéntanos sobre tu proyecto o consulta *"
+                          value={formData.message}
+                          onChange={handleInputChange}
+                          className="form-input h-32"
+                          required
+                        ></textarea>
+                        
+                        <button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="sci-fi-button text-xl w-full"
+                        >
+                          {isSubmitting ? 'ENVIANDO...' : 'ENVIAR MENSAJE'}
+                        </button>
+                      </form>
+                      
+                      {submitSuccess && (
+                        <div className="success-message mt-6">
+                          ¡Gracias por contactarnos! Te responderemos en las próximas 24 horas.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-8">
+                    <div>
+                      <h3 className="text-3xl font-bold mb-6 quantum-lemon text-cyan-400">INFORMACIÓN DE CONTACTO</h3>
+                      
+                      <div className="space-y-6">
+                        <div className="contact-info-card">
+                          <div className="contact-icon">
+                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                            </svg>
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-white mb-2">Email Corporativo</h4>
+                            <p className="text-cyan-400 font-medium">hello@omniversegames.com</p>
+                            <p className="text-gray-400 text-sm">Respuesta garantizada en 24-48 horas</p>
+                          </div>
+                        </div>
+                        
+                        <div className="contact-info-card">
+                          <div className="contact-icon">
+                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clipRule="evenodd"/>
+                            </svg>
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-white mb-2">Inversores & Funding</h4>
+                            <p className="text-cyan-400 font-medium">investors@omniversegames.com</p>
+                            <p className="text-gray-400 text-sm">Oportunidades de inversión exclusivas</p>
+                          </div>
+                        </div>
+                        
+                        <div className="contact-info-card">
+                          <div className="contact-icon">
+                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clipRule="evenodd"/>
+                            </svg>
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-white mb-2">Prensa & Media</h4>
+                            <p className="text-cyan-400 font-medium">press@omniversegames.com</p>
+                            <p className="text-gray-400 text-sm">Kit de prensa, entrevistas y assets</p>
+                          </div>
+                        </div>
+
+                        <div className="contact-info-card">
+                          <div className="contact-icon">
+                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clipRule="evenodd"/>
+                              <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
+                            </svg>
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-white mb-2">Carreras</h4>
+                            <p className="text-cyan-400 font-medium">careers@omniversegames.com</p>
+                            <p className="text-gray-400 text-sm">Únete al equipo del futuro</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* CTA Section */}
+                    <div className="cta-section">
+                      <h4 className="text-2xl font-bold mb-4 quantum-lemon text-white">¿LISTO PARA EL FUTURO?</h4>
+                      <p className="text-gray-300 mb-6">
+                        Únete a miles de jugadores que ya están esperando The Primordial Battlezone
+                      </p>
+                      <div className="space-y-4">
+                        <button 
+                          onClick={() => setIsPreorderModalOpen(true)}
+                          className="sci-fi-button text-lg w-full bg-gradient-to-r from-orange-500 to-red-600"
+                        >
+                          PRE-ORDENAR JUEGO
+                        </button>
+                        <button 
+                          onClick={handleLauncherDownload}
+                          className="sci-fi-button text-lg w-full border-2 border-cyan-400 bg-transparent hover:bg-cyan-900/30"
+                        >
+                          DESCARGAR LAUNCHER
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+        
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0a0f1a] text-white overflow-x-hidden relative">
+      {/* Cosmic Background */}
+      <div id="stars-container" className="absolute inset-0 z-0"></div>
+      
+      {/* Floating Particles */}
+      <div className="absolute inset-0 z-10 pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-cyan-400 rounded-full animate-float"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${8 + Math.random() * 7}s`
+            }}
+          ></div>
+        ))}
+      </div>
+
+      {/* CSS Styles */}
+      <style jsx>{`
+        @font-face {
+          font-family: 'QuantumLemon';
+          src: url('data:font/truetype;base64,') format('truetype');
+          font-weight: bold;
+          font-style: normal;
+        }
+        
+        @keyframes pulse {
+          0%, 100% { opacity: 0.2; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.5); }
+        }
+        
+        @keyframes float {
+          0% { transform: translateY(0) translateX(0) rotate(0deg); }
+          33% { transform: translateY(-100px) translateX(50px) rotate(120deg); }
+          66% { transform: translateY(-50px) translateX(-30px) rotate(240deg); }
+          100% { transform: translateY(-200px) translateX(0) rotate(360deg); }
+        }
+        
+        @keyframes glow {
+          from { text-shadow: 0 0 10px rgba(0, 176, 255, 0.8), 0 0 20px rgba(0, 176, 255, 0.6); }
+          to { text-shadow: 0 0 20px rgba(0, 176, 255, 0.9), 0 0 40px rgba(0, 176, 255, 0.7), 0 0 60px rgba(0, 176, 255, 0.5); }
+        }
+        
+        @keyframes rotate {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        
+        .star {
+          position: absolute;
+          background-color: white;
+          border-radius: 50%;
+          pointer-events: none;
+        }
+        
+        .sci-fi-button {
+          background: linear-gradient(145deg, #00b0ff, #0077ff);
+          border: 1px solid rgba(0, 176, 255, 0.3);
+          box-shadow: 0 0 15px rgba(0, 176, 255, 0.2);
+          color: #ffffff;
+          padding: 12px 24px;
+          font-family: 'QuantumLemon', 'Arial Black', sans-serif;
+          font-weight: bold;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          position: relative;
+          overflow: hidden;
+          border-radius: 50px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .sci-fi-button::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: linear-gradient(135deg, transparent, rgba(0, 176, 255, 0.3), transparent);
+          transform: rotate(45deg);
+          transition: 0.5s;
+        }
+        
+        .sci-fi-button:hover::before {
+          left: 150%;
+        }
+        
+        .sci-fi-button:hover {
+          box-shadow: 0 0 25px rgba(0, 176, 255, 0.5);
+          transform: translateY(-2px);
+        }
+        
+        .nav-link {
+          color: #fff;
+          font-family: 'QuantumLemon', 'Arial Black', sans-serif;
+          padding: 1rem 0;
+          margin: 0 1rem;
+          border-bottom: 2px solid transparent;
+          transition: all 0.3s ease;
+          position: relative;
+          cursor: pointer;
+          display: block;
+          font-weight: bold;
+          letter-spacing: 1px;
+        }
+        
+        .nav-link.active {
+          color: #00b0ff;
+          border-bottom: 2px solid #00b0ff;
+        }
+        
+        .nav-link:hover {
+          color: #00b0ff;
+        }
+        
+        .form-input {
+          background: rgba(0, 0, 0, 0.6);
+          border: 1px solid rgba(0, 176, 255, 0.3);
+          color: white;
+          padding: 16px;
+          width: 100%;
+          border-radius: 8px;
+          font-family: 'Arial', sans-serif;
+          transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+          outline: none;
+          border-color: rgba(0, 176, 255, 0.8);
+          box-shadow: 0 0 15px rgba(0, 176, 255, 0.3);
+        }
+        
+        .form-input::placeholder {
+          color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .success-message {
+          background: linear-gradient(135deg, rgba(0, 255, 127, 0.1), rgba(0, 255, 127, 0.2));
+          border: 1px solid rgba(0, 255, 127, 0.5);
+          color: #00ff7f;
+          padding: 1rem;
+          border-radius: 8px;
+          text-align: center;
+          font-weight: bold;
+          animation: fadeInOut 4s ease-in-out;
+        }
+        
+        @keyframes fadeInOut {
+          0% { opacity: 0; transform: translateY(10px); }
+          20% { opacity: 1; transform: translateY(0); }
+          80% { opacity: 1; transform: translateY(0); }
+          100% { opacity: 0; transform: translateY(-10px); }
+        }
+        
+        .vision-card {
+          background: linear-gradient(135deg, rgba(10, 15, 30, 0.8), rgba(20, 30, 50, 0.8));
+          border: 1px solid rgba(0, 176, 255, 0.2);
+          border-radius: 16px;
+          padding: 2rem;
+          transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
+        }
+        
+        .vision-card:hover {
+          transform: translateY(-8px);
+          border-color: rgba(0, 176, 255, 0.6);
+          box-shadow: 0 20px 40px rgba(0, 176, 255, 0.1);
+        }
+        
+        .team-card {
+          background: linear-gradient(135deg, rgba(10, 15, 30, 0.8), rgba(20, 30, 50, 0.8));
+          border: 1px solid rgba(0, 176, 255, 0.2);
+          border-radius: 16px;
+          padding: 2rem;
+          text-center;
+          transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
+        }
+        
+        .team-card:hover {
+          transform: translateY(-8px);
+          border-color: rgba(0, 176, 255, 0.6);
+          box-shadow: 0 20px 40px rgba(0, 176, 255, 0.1);
+        }
+        
+        .career-card {
+          background: linear-gradient(135deg, rgba(10, 15, 30, 0.8), rgba(20, 30, 50, 0.8));
+          border: 1px solid rgba(0, 176, 255, 0.2);
+          border-radius: 16px;
+          padding: 2rem;
+          transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
+        }
+        
+        .career-card:hover {
+          transform: translateY(-8px);
+          border-color: rgba(0, 176, 255, 0.6);
+          box-shadow: 0 20px 40px rgba(0, 176, 255, 0.1);
+        }
+        
+        .game-showcase-card {
+          background: linear-gradient(135deg, rgba(10, 15, 30, 0.9), rgba(20, 30, 50, 0.9));
+          border: 1px solid rgba(0, 176, 255, 0.3);
+          border-radius: 20px;
+          padding: 3rem;
+          backdrop-filter: blur(15px);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .contact-info-card {
+          display: flex;
+          align-items: start;
+          background: linear-gradient(135deg, rgba(10, 15, 30, 0.6), rgba(20, 30, 50, 0.6));
+          border: 1px solid rgba(0, 176, 255, 0.2);
+          border-radius: 12px;
+          padding: 1.5rem;
+          transition: all 0.3s ease;
+        }
+        
+        .contact-info-card:hover {
+          border-color: rgba(0, 176, 255, 0.5);
+          transform: translateX(8px);
+        }
+        
+        .contact-icon {
+          width: 48px;
+          height: 48px;
+          background: linear-gradient(135deg, #00b0ff, #0077ff);
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 1rem;
+          flex-shrink: 0;
+          color: white;
+        }
+        
+        .cta-section {
+          background: linear-gradient(135deg, rgba(0, 176, 255, 0.1), rgba(147, 51, 234, 0.1));
+          border: 1px solid rgba(0, 176, 255, 0.3);
+          border-radius: 16px;
+          padding: 2rem;
+          text-align: center;
+        }
+        
+        .avatar-container {
+          width: 80px;
+          height: 80px;
+          margin: 0 auto;
+          border: 3px solid rgba(0, 176, 255, 0.5);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s ease;
+        }
+        
+        .team-card:hover .avatar-container {
+          border-color: rgba(0, 176, 255, 0.8);
+          box-shadow: 0 0 20px rgba(0, 176, 255, 0.3);
+        }
+        
+        .status-badge {
+          background: linear-gradient(135deg, #00ff7f, #00cc66);
+          color: #000;
+          padding: 8px 16px;
+          border-radius: 25px;
+          font-family: 'QuantumLemon', 'Arial Black', sans-serif;
+          font-weight: bold;
+          font-size: 0.8rem;
+          letter-spacing: 1px;
+        }
+        
+        .platform-badge {
+          background: rgba(0, 176, 255, 0.2);
+          border: 1px solid rgba(0, 176, 255, 0.5);
+          color: #00b0ff;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-weight: bold;
+          font-size: 0.85rem;
+        }
+        
+        .job-type-badge {
+          background: rgba(147, 51, 234, 0.2);
+          border: 1px solid rgba(147, 51, 234, 0.5);
+          color: #9333ea;
+          padding: 6px 12px;
+          border-radius: 15px;
+          font-weight: bold;
+          font-size: 0.75rem;
+        }
+        
+        .pricing-card {
+          background: linear-gradient(135deg, rgba(255, 69, 0, 0.1), rgba(255, 140, 0, 0.1));
+          border: 1px solid rgba(255, 69, 0, 0.3);
+          border-radius: 12px;
+          padding: 1.5rem;
+        }
+        
+        .icon {
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(135deg, #00b0ff, #0077ff);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto;
+          color: white;
+        }
+        
+        .quantum-lemon {
+          font-family: 'QuantumLemon', 'Arial Black', sans-serif;
+          font-weight: bold;
+          letter-spacing: -0.02em;
+          text-transform: uppercase;
+        }
+        
+        .quantum-lemon-title {
+          font-family: 'QuantumLemon', 'Arial Black', sans-serif;
+          font-weight: bold;
+          letter-spacing: -0.02em;
+          text-transform: uppercase;
+          text-shadow: 
+            0 0 10px rgba(0, 176, 255, 0.8),
+            0 0 20px rgba(0, 176, 255, 0.6),
+            0 0 30px rgba(0, 176, 255, 0.4);
+          animation: glow 3s infinite alternate;
+        }
+        
+        #stars-container {
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(ellipse at center, #0a0f1a 0%, #000 70%);
+          overflow: hidden;
+        }
+        
+        #stars-container::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: 
+            radial-gradient(circle at 20% 30%, rgba(100, 100, 255, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(255, 100, 100, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 60% 40%, rgba(100, 255, 100, 0.3) 0%, transparent 50%);
+          animation: rotate 120s linear infinite;
+        }
+        
+        #stars-container::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: 
+            radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 30%),
+            radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 30%);
+          animation: rotate 200s linear infinite reverse;
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+          .quantum-lemon-title {
+            font-size: 3rem;
+          }
+          
+          .sci-fi-button {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+          }
+          
+          .vision-card, .team-card, .career-card {
+            padding: 1.5rem;
+          }
+          
+          .game-showcase-card {
+            padding: 2rem;
+          }
+        }
+      `}</style>
+
+      {/* Header */}
+      <header className="relative z-30 p-4 border-b border-cyan-500/20 backdrop-blur-md bg-[#0a0f1a]/80">
+        <div className="flex items-center justify-between container mx-auto">
+          <div className="text-white font-bold text-xl tracking-wider quantum-lemon">
+            OMNIVERSE GAMES
+          </div>
+          
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex space-x-6">
+            {['inicio', 'proyectos', 'equipo', 'carreras', 'contacto'].map((item) => (
+              <button
+                key={item}
+                onClick={() => handleNavClick(item)}
+                className={`nav-link ${activeSection === item ? 'active' : ''}`}
+              >
+                {item.charAt(0).toUpperCase() + item.slice(1)}
+              </button>
+            ))}
+          </nav>
+          
+          {/* Mobile Menu Button */}
+          <button 
+            className="lg:hidden text-white"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          
+          {/* CTA Button */}
+          <button 
+            onClick={() => setIsPreorderModalOpen(true)}
+            className="hidden md:block sci-fi-button bg-gradient-to-r from-orange-500 to-red-600"
+          >
+            PRE-ORDENAR
+          </button>
+        </div>
+        
+        {/* Mobile Navigation Menu */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden absolute top-full left-0 right-0 bg-[#0a0f1a]/95 backdrop-blur-md border-b border-cyan-500/20 z-40">
+            <nav className="container mx-auto py-4">
+              {['inicio', 'proyectos', 'equipo', 'carreras', 'contacto'].map((item) => (
+                <button
+                  key={item}
+                  onClick={() => handleNavClick(item)}
+                  className={`nav-link w-full text-left px-4 ${activeSection === item ? 'active' : ''}`}
+                >
+                  {item.charAt(0).toUpperCase() + item.slice(1)}
+                </button>
+              ))}
+            </nav>
+          </div>
+        )}
+      </header>
+
+      {/* Main Content */}
+      <main className="relative z-20">
+        {renderSection()}
+      </main>
+
+      {/* Footer */}
+      <footer className="relative z-20 py-12 bg-gradient-to-t from-[#000] to-[#0a0f1a] border-t border-gray-800">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div className="md:col-span-2">
+              <div className="text-white font-bold text-2xl tracking-wider quantum-lemon mb-4">
+                OMNIVERSE GAMES
+              </div>
+              <p className="text-gray-400 mb-6 leading-relaxed">
+                Creamos el futuro del entretenimiento interactivo, revolucionando la industria gaming un universo a la vez. Únete a nuestra visión de mundos inmersivos sin límites.
+              </p>
+              <div className="flex space-x-4">
+                {[
+                  { icon: "M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.184-.896-.957-2.173-1.555-3.591-1.555-2.717 0-4.92 2.203-4.92 4.917 0 .388.045.768.127 1.135-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-1.683 1.319-3.815 2.105-6.117 2.105-.39 0-.779-.023-1.175-.067 2.181 1.395 4.768 2.212 7.581 2.212 9.054 0 13.99-7.496 13.99-13.985 0-.21 0-.42-.015-.629 1.007-.734 1.86-1.734 2.418-2.917z", name: "Twitter" },
+                  { icon: "M22.56 0H1.44C.64 0 0 .64 0 1.44v21.12C0 23.36.64 24 1.44 24h11.36v-9.294H9.69v-3.622h3.128V8.413c0-3.1 1.894-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.8 0 1.44-.64 1.44-1.44V1.44C24 .64 23.36 0 22.56 0z", name: "Facebook" },
+                  { icon: "M12 0C5.374 0 0 5.373 0 12s5.374 12 12 12 12-5.373 12-12S18.626 0 12 0zm5.568 8.16c-.169 1.858-.896 3.423-2.13 4.608-.532.51-1.073.81-1.463.978-.384-.168-.932-.468-1.463-.978-1.235-1.185-1.961-2.75-2.13-4.608h7.186zM12 21.6c-5.302 0-9.6-4.298-9.6-9.6S6.698 2.4 12 2.4s9.6 4.298 9.6 9.6-4.298 9.6-9.6 9.6z", name: "Instagram" }
+                ].map((social, index) => (
+                  <a key={index} href="#" className="text-gray-400 hover:text-cyan-400 transition-colors p-2">
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                      <path d={social.icon}/>
+                    </svg>
+                  </a>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="font-bold text-white mb-4 quantum-lemon text-lg">PRODUCTOS</h3>
+              <ul className="space-y-3 text-gray-400">
+                <li><a href="#" className="hover:text-cyan-400 transition-colors">The Primordial Battlezone</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors">Launcher Desktop</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors">Developer Tools</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors">Community Hub</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-bold text-white mb-4 quantum-lemon text-lg">EMPRESA</h3>
+              <ul className="space-y-3 text-gray-400">
+                <li><a href="#" className="hover:text-cyan-400 transition-colors">Sobre Nosotros</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors">Carreras</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors">Prensa</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors">Inversores</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors">Blog</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-800 pt-8 text-center">
+            <p className="text-gray-500 text-sm mb-4">
+              © 2025 Omniverse Games. Todos los derechos reservados.
+            </p>
+            <p className="text-cyan-400 font-medium">
+              Contacto directo: <a href="mailto:hello@omniversegames.com" className="hover:text-cyan-300 transition-colors">hello@omniversegames.com</a>
+            </p>
+          </div>
+        </div>
+      </footer>
+
+      {/* Pre-order Modal */}
+      {isPreorderModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 backdrop-blur-sm">
+          <div className="modal-container relative max-w-2xl w-full">
+            <button
+              onClick={() => setIsPreorderModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white text-3xl font-bold z-10"
+            >
+              ×
+            </button>
+            
+            <div className="text-center mb-8">
+              <h3 className="text-4xl font-bold mb-4 quantum-lemon text-cyan-400">PRE-ORDEN EXCLUSIVA</h3>
+              <h4 className="text-2xl mb-4 quantum-lemon text-white">THE PRIMORDIAL BATTLEZONE</h4>
+              <p className="text-gray-300 mb-6">
+                Sé parte de la revolución gaming. Pre-ordena ahora y obtén acceso exclusivo, contenido premium y descuentos especiales.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+              <div className="preorder-benefits">
+                <h5 className="text-xl font-bold text-cyan-400 mb-4">BENEFICIOS EXCLUSIVOS:</h5>
+                <div className="space-y-3">
+                  {[
+                    "Acceso Beta Cerrada - 3 meses antes del lanzamiento",
+                    "Skin Legendary 'Primordial Founder' única",
+                    "Season Pass Año 1 incluido (valor $40)",
+                    "Título especial 'Pioneer' en el juego",
+                    "Arte conceptual digital exclusivo",
+                    "Invitación a eventos VIP del estudio"
+                  ].map((benefit, index) => (
+                    <div key={index} className="flex items-start">
+                      <svg className="w-5 h-5 text-cyan-400 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span className="text-gray-300 text-sm">{benefit}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="preorder-pricing">
+                <div className="pricing-card mb-6">
+                  <div className="text-center">
+                    <div className="text-lg text-gray-400 line-through mb-1">$59.99</div>
+                    <div className="text-4xl font-bold text-cyan-400 mb-1">$49.99</div>
+                    <div className="text-sm text-gray-400 mb-4">Precio de Pre-orden</div>
+                    <div className="text-lg font-bold text-green-400 mb-4">¡Ahorra $10!</div>
+                  </div>
+                </div>
+                
+                <div className="text-center text-sm text-gray-400 mb-6">
+                  <p>✓ Pago seguro con PayPal y tarjetas principales</p>
+                  <p>✓ Sin cargos hasta 30 días antes del lanzamiento</p>
+                  <p>✓ Cancelación gratuita en cualquier momento</p>
+                </div>
+              </div>
+            </div>
+            
+            {submitSuccess && (
+              <div className="success-message mb-6">
+                ¡Pre-orden confirmada! Te hemos enviado los detalles por email. ¡Bienvenido a la revolución gaming!
+              </div>
+            )}
+            
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Nombre Completo *"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  required
+                />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email *"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  required
+                />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <select name="platform" className="form-input" required>
+                  <option value="">Plataforma Preferida *</option>
+                  <option value="pc">PC (Steam/Epic)</option>
+                  <option value="ps5">PlayStation 5</option>
+                  <option value="xbox">Xbox Series X/S</option>
+                </select>
+                <select name="region" className="form-input" required>
+                  <option value="">Región *</option>
+                  <option value="na">América del Norte</option>
+                  <option value="eu">Europa</option>
+                  <option value="asia">Asia-Pacífico</option>
+                  <option value="latam">Latinoamérica</option>
+                </select>
+              </div>
+              
+              <div className="text-center">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="sci-fi-button text-xl w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700"
+                >
+                  {isSubmitting ? 'PROCESANDO PRE-ORDEN...' : 'CONFIRMAR PRE-ORDEN $49.99'}
+                </button>
+                
+                <p className="text-xs text-gray-400 mt-4">
+                  Al confirmar la pre-orden, aceptas nuestros términos de servicio y política de privacidad.
+                  El cargo se realizará 30 días antes del lanzamiento oficial.
+                </p>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* NDA Modal */}
+      {isNdaModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80 backdrop-blur-sm">
+          <div className="modal-container relative max-w-2xl w-full">
+            <button
+              onClick={() => setIsNdaModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white text-3xl font-bold z-10"
+            >
+              ×
+            </button>
+            
+            <div className="text-center mb-8">
+              <h3 className="text-4xl font-bold mb-4 quantum-lemon text-cyan-400">ACUERDO DE CONFIDENCIALIDAD</h3>
+              <h4 className="text-xl mb-4 text-white">INVERSORES & SOCIOS ESTRATÉGICOS</h4>
+              <p className="text-gray-300 leading-relaxed">
+                Para acceder a nuestra documentación exclusiva de inversión, incluyendo proyecciones financieras, roadmap tecnológico y oportunidades de partnership, complete este formulario. 
+                Nuestro equipo ejecutivo le enviará inmediatamente el NDA y programará una reunión personalizada.
+              </p>
+            </div>
+            
+            {submitSuccess && (
+              <div className="success-message mb-6">
+                ¡Solicitud recibida! Nuestro equipo de desarrollo de negocio se pondrá en contacto en las próximas 4 horas con el NDA y agenda de reunión.
+              </div>
+            )}
+            
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Nombre Completo *"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  required
+                />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email Corporativo *"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  required
+                />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <input
+                  type="text"
+                  name="company"
+                  placeholder="Empresa/Fondo de Inversión *"
+                  value={formData.company || ''}
+                  onChange={(e) => setFormData({...formData, company: e.target.value})}
+                  className="form-input"
+                  required
+                />
+                <input
+                  type="text"
+                  name="position"
+                  placeholder="Posición/Título *"
+                  value={formData.position || ''}
+                  onChange={(e) => setFormData({...formData, position: e.target.value})}
+                  className="form-input"
+                  required
+                />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <select
+                  name="investorType"
+                  className="form-input"
+                  required
+                >
+                  <option value="">Tipo de Inversor *</option>
+                  <option value="vc">Venture Capital</option>
+                  <option value="private_equity">Private Equity</option>
+                  <option value="angel">Angel Investor</option>
+                  <option value="strategic">Inversor Estratégico</option>
+                  <option value="publisher">Publisher/Distribuidor</option>
+                  <option value="corporate">Corporativo</option>
+                </select>
+                <select
+                  name="investmentRange"
+                  className="form-input"
+                  required
+                >
+                  <option value="">Rango de Inversión *</option>
+                  <option value="100k-500k">$100K - $500K</option>
+                  <option value="500k-1m">$500K - $1M</option>
+                  <option value="1m-5m">$1M - $5M</option>
+                  <option value="5m-10m">$5M - $10M</option>
+                  <option value="10m+">$10M+</option>
+                </select>
+              </div>
+              
+              <textarea
+                name="message"
+                placeholder="Cuéntanos sobre tu experiencia en gaming, portfolio de inversiones y qué te interesa específicamente de Omniverse Games *"
+                value={formData.message}
+                onChange={handleInputChange}
+                className="form-input h-32 mb-6"
+                required
+              ></textarea>
+              
+              <div className="text-center">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="sci-fi-button text-xl w-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700"
+                >
+                  {isSubmitting ? 'ENVIANDO SOLICITUD...' : 'SOLICITAR NDA Y REUNIÓN'}
+                </button>
+                
+                <p className="text-xs text-gray-400 mt-4">
+                  Esta información es estrictamente confidencial. Al enviar este formulario, confirmas tu interés legítimo en oportunidades de inversión.
+                  <br />
+                  <strong>Contacto directo:</strong> bankaipc@gmail.com
+                </p>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        .modal-container {
+          background: linear-gradient(135deg, rgba(10, 15, 30, 0.95), rgba(20, 30, 50, 0.95));
+          border: 1px solid rgba(0, 176, 255, 0.3);
+          border-radius: 20px;
+          padding: 2rem;
+          backdrop-filter: blur(20px);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+          max-height: 90vh;
+          overflow-y: auto;
+        }
+        
+        .preorder-benefits {
+          background: linear-gradient(135deg, rgba(0, 176, 255, 0.1), rgba(0, 176, 255, 0.05));
+          border: 1px solid rgba(0, 176, 255, 0.2);
+          border-radius: 12px;
+          padding: 1.5rem;
+        }
+        
+        .preorder-pricing {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default App;
