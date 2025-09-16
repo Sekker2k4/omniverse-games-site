@@ -4,9 +4,14 @@
   "type": "module",
   "scripts": {
     "build": "react-router build",
+    "build:client": "vite build",
+    "build:server": "tsc -p tsconfig.server.json",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc"
+  },
+ 
+}
   },
   "dependencies": {
     "@react-router/node": "^7.7.1",
@@ -29,4 +34,7 @@
     "vite": "^6.3.3",
     "vite-tsconfig-paths": "^5.1.4"
   }
+  {
+}
+
 }
